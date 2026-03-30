@@ -1,4 +1,5 @@
-// Accessory decoder with programming function at programming track
+// Accessories decoder with programming function at programming track
+// (c) Michael Hochmuth https://github.com/Sim-59/ATtiny-Accessories-Decoder
 // Some ideas from Luca Dentella, 29.12.2018 https://github.com/lucadentella/arduino-dcc
 // Decoder for 3 outputs, one module address with 3 output ports, every port with 2 gates, port4 for blinking
 // Decoder-Address = LSB + MSB*64
