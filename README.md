@@ -1,4 +1,5 @@
 # Accessory decoder with ATtiny85
+**Properties**
 - Arduino-ATtiny (micronucleus)
 - Two decoder addresses are used
   - 4 Ports with two gates
@@ -26,17 +27,18 @@
 
 `CV11`\
 `x x x x  x x x x`\
-`| | | +--+-+-+-+----- 5 bit pulse length if PORT1 and PORT2 are alternating ports, number * 256 ms (256 ms ... 7.93 s)`\
+`| | | +--+-+-+-+----- 5 bit pulse length if PORT1 and PORT2 are alternating ports`\
+`| | |                 number * 256 ms (256 ms ... 7.93 s)`\
 `| | |                 e.g. usable for switches without voltage cut-off`\
-`| | |                 if this value is 0  (all 5 bits), then the respective port is the complete time ON`\
+`| | |                 0  (all 5 bits) for permanently time ON`\
 `+-+-+---------------- 3 bit for blinking periode in s (0.5 ... 3.5 s)`\
 
-`Blinking for a port will be activatet with writing Address+1 and port number, activated with gate=1 and deactivated with gate=0,`\
-`but only if a blinking periode in CV11 and independent ports`\
-`activating an other port resets the blinking of all ports, the blinking must be reactivated.`\
+Blinking for a port will be activatet with writing Address+1 and port number
+  - activated with gate=1 and deactivated with gate=0
+  - but only if a blinking periode in CV11 is set and port is independent
+  - activating an other port resets the blinking of all ports, the blinking must be reactivated
 
-`writing to CV8 is resetting the decoder with defaults`\ 
-`  CV1 = 1, CV9 = 0, CV10 = 0, CV11 = 0`\
-`  PORT1 and PORT2 as independent or alternating ports,`\
-`  impulse length for alternating ports is configurable`\
-`  PORT3 and PORT4 are always independent`\
+Writing to CV8 is resetting the decoder with defaults
+  - CV1 = 1, CV9 = 0, CV10 = 0, CV11 = 0
+  - PORT1 and PORT2 as independent or alternating ports
+  - PORT3 and PORT4 are always independent
