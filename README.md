@@ -33,7 +33,7 @@
 `| | |                 0  (all 5 bits) for permanently time ON`\
 `+-+-+---------------- 3 bit for blinking periode in s (0.5 ... 3.5 s)`
 
-Blinking for a port will be activatet with writing Address+1 and port number
+Blinking for a port will be activatet with writing to Address+1 and corresponding port number
   - activated with gate=1 and deactivated with gate=0
   - but only if a blinking periode in CV11 is set and port is independent
   - activating an other port resets the blinking of all ports, the blinking must be reactivated
