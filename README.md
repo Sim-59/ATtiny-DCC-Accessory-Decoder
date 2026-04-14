@@ -1,5 +1,6 @@
-# Accessories decoder with ATtiny85
+# Accessory decoder with ATtiny85
 - Arduino-ATtiny (micronucleus)
-- 3 Ports with two gates
-- The 4. port for blinking
-- Hardware extension for ACK pulse for reading and writing CVs at programming track
+- Two decoder addresses are used
+  - 4 Ports with two gates
+  - The second address is used for blinking function
+- With a jumper an ACK pulse is possible for reading back the CVs at programming track
