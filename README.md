@@ -1,4 +1,4 @@
-# Accessory decoder with ATtiny85
+# Accessory decoder with ATtiny85-Digispark-Board
 **Properties**
 - Based at Arduino-ATtiny85 (micronucleus)
 - Two decoder addresses are used
