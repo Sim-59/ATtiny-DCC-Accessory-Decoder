@@ -1,6 +1,6 @@
 # Accessory decoder with ATtiny85
 **Properties**
-- Arduino-ATtiny (micronucleus)
+- Based at Arduino-ATtiny85 (micronucleus)
 - Two decoder addresses are used
   - 4 Ports with two gates
   - The second address is used for blinking function
