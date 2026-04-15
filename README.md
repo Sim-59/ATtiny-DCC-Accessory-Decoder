@@ -2,10 +2,11 @@
 **Properties**
 - Possible hardware - ATtiny85 Digispark Board
 - using the [NmraDcc library](https://github.com/mrrwa/NmraDcc) from [MRRWA](http://mrrwa.org/)
-- Two consecutive module accessory decoder addresses (MADA) are used
-  - Each address uses four Ports with a gate setting to on/off
-  - The second address is used to realize a blinking port
-- With additional hardware an ACK pulse is possible for reading back the CVs at programming track
+- 4 output ports
+- Two consecutive module accessory decoder addresses (MADA)
+  - Second address for blinking
+  - Each address uses 4 ports with a gate setting to on/off
+- CV reading at programming track (PT) is possible with additional circuit for 60 mA load
 
 `Decoder-Address = LSB (CV1) + MSB (CV9) * 64`\
 `CV1 = 6 bit LSB`\
