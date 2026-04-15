@@ -1,7 +1,7 @@
 # Accessory decoder with ATtiny85-Digispark-Board
 **Properties**
 - Based at Arduino-ATtiny85 (micronucleus) hardware
-- using the [NmraDcc-Bibliothek](https://github.com/mrrwa/NmraDcc) fromvon [MRRWA](http://mrrwa.org/)
+- using the [NmraDcc library](https://github.com/mrrwa/NmraDcc) from [MRRWA](http://mrrwa.org/)
 - Two decoder addresses are used
   - 4 Ports with one gates (on/off)
   - The second address is used for blinking function
