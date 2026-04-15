@@ -6,7 +6,7 @@
 - Two consecutive module accessory decoder addresses (MADA)
   - Second address uses for blinking output
   - Each address uses 4 ports with a gate setting to on/off
-- CV reading at programming track (PT) is possible with additional circuit for 60 mA load
+- CV reading at programming track (PT) is possible with a temporarily circuit for 60 mA load at one port
 
 `Decoder-Address = LSB (CV1) + MSB (CV9) * 64`\
 `CV1 = 6 bit LSB`\
