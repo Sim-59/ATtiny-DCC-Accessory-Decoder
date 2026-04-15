@@ -16,7 +16,7 @@
 //
 // CV10 - default 0 for independent ports
 // x x x x  x x x x
-//              +-+----- "0-0" (0) = independent PORTS1/PORT2, 
+//              +-+----- "0-0" (0) = independent PORT1/PORT2, 
 //                       "0-1" (1) = alternating PORT1/PORT2 with Port1-gate on/off
 //                       "1-0" (2) = alternating PORT1/PORT2 with Port1-gate on / Port2-gate on
 //
