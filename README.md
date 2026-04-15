@@ -1,4 +1,4 @@
-# Accessory decoder with ATtiny85-Digispark-Board
+# Accessory decoder with ATtiny85
 **Properties**
 - Based at Arduino-ATtiny85 Digispark hardware (micronucleus bootloader) 
 - using the [NmraDcc library](https://github.com/mrrwa/NmraDcc) from [MRRWA](http://mrrwa.org/)
