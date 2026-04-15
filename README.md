@@ -1,4 +1,4 @@
-# Accessory decoder with ATtiny85
+# DCC accessory decoder with ATtiny85
 **Properties**
 - Possible hardware - ATtiny85 Digispark Board
 - using the [NmraDcc library](https://github.com/mrrwa/NmraDcc) from [MRRWA](http://mrrwa.org/)
