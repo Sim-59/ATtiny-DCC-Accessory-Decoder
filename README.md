@@ -1,8 +1,9 @@
 # Accessory decoder with ATtiny85-Digispark-Board
 **Properties**
-- Based at Arduino-ATtiny85 (micronucleus)
+- Based at Arduino-ATtiny85 (micronucleus) hardware
+- using the [NmraDcc-Bibliothek](https://github.com/mrrwa/NmraDcc) fromvon [MRRWA](http://mrrwa.org/)
 - Two decoder addresses are used
-  - 4 Ports with two gates
+  - 4 Ports with one gates (on/off)
   - The second address is used for blinking function
 - With a jumper an ACK pulse is possible for reading back the CVs at programming track
 
@@ -22,7 +23,7 @@
 
 `CV10`\
 `x x x x  x x x x`\
-`               +----- "0" = independent PORTS1/PORT2`\
+`             +-+----- "0" = independent PORTS1/PORT2`\
 `                      "1" = alternating PORT1/PORT2, e.g. signals, switches`
 
 `CV11`\
