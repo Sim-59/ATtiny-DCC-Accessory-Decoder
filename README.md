@@ -4,7 +4,7 @@
 - using the [NmraDcc library](https://github.com/mrrwa/NmraDcc) from [MRRWA](http://mrrwa.org/)
 - 4 output ports
 - Two consecutive module accessory decoder addresses (MADA)
-  - Second address for blinking
+  - Second address uses for blinking output
   - Each address uses 4 ports with a gate setting to on/off
 - CV reading at programming track (PT) is possible with additional circuit for 60 mA load
 
