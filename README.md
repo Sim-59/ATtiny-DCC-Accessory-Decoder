@@ -35,7 +35,7 @@
 `| | |                 0  (all 5 bits) for permanently time ON`\
 `+-+-+---------------- 3 bit for blinking periode in s (0.5 ... 3.5 s)`
 
-A blinking port will be activated with writing to Address+1 and corresponding port number
+A blinking port is generated with writing to Address+1 and corresponding port number
   - but only if a blinking periode in CV11 is set and port is defined as independent
 
 Writing to CV8 is resetting the decoder with defaults
