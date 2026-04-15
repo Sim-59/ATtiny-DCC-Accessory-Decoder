@@ -1,11 +1,11 @@
 # Accessory decoder with ATtiny85
 **Properties**
-- Based on Arduino-ATtiny85 Digispark hardware (micronucleus bootloader)
+- Possible hardware - ATtiny85 Digispark Board
 - using the [NmraDcc library](https://github.com/mrrwa/NmraDcc) from [MRRWA](http://mrrwa.org/)
 - Two consecutive module accessory decoder addresses (MADA) are used
   - Each address uses four Ports with a gate setting to on/off
   - The second address is used to realize a blinking port
-- With a jumper an ACK pulse is possible for reading back the CVs at programming track
+- With additional hardware an ACK pulse is possible for reading back the CVs at programming track
 
 `Decoder-Address = LSB (CV1) + MSB (CV9) * 64`\
 `CV1 = 6 bit LSB`\
