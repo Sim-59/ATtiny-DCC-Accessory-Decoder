@@ -9,11 +9,11 @@
 - CV reading at programming track (PT) is possible with a temporarily circuit for 60 mA load at one port
 
 `Decoder-Address = LSB (CV1) + MSB (CV9) * 64`\
-`CV1 = 6 bit LSB`\
+`CV1 = 6 bit LSB, default 1`\
 `x x x x  x x x x`\
 `    +-+--+-+-+-+----- LSB 0 ... 63`
 
-`CV9 = 3 Bit MSB`\
+`CV9 = 3 Bit MSB, default 0`\
 `x x x x  x x x x`\
 `           +-+-+----- MSB (0 ... 7) * 64`
 
@@ -22,20 +22,20 @@
 `      +--+-+-+-+----- 5 bit pulse length if PORT1 and PORT2 are alternating ports`\
 `                      number * 256 ms (256 ms ... 7.93 s)`\
 `                      e.g. usable for switches without voltage cut-off`\
-`                      0  (all 5 bits) for permanently time ON`\
+`                      0  (all 5 bits) for continous ON if activate`\
 
-`CV29`\
+`CV29 Configuration, default 192`\
 `x x x x  x x x x `\
 `| +------------------ "0" = Decoder Address Mode "1" = Output Address Mode`\
 `+-------------------- "1" = Accessory Decoder Mode, is set for accessories`
 
-`CV33 - default 0 for independent ports`\
+`CV33 Decoder configuration - default 0 for independent ports`\
 `x x x x  x x x x`\
 `             +-+----- "0-0" (0) = independent PORT1/PORT2`\
 `                      "0-1" (1) = alternating PORT1/PORT2 with Port1-gate on/off`\
 `                      "1-0" (2) = alternating PORT1/PORT2 with Port1-gate on / Port2-gate on`
 
-`CV34 - default 0b00000100 (4) for 1 sec blink frequency`\
+`CV34 Blinking period - default 4 for 1 sec blink frequency`\
 `x x x x  x x x x`\
 `         +-+-+-+----- 4 bit for blinking periode in s (0.25 ... 3.75 s)`\
 
