@@ -35,12 +35,12 @@
 `                      "0-1" (1) = alternating PORT1/PORT2 with Port1-gate on/off`\
 `                      "1-0" (2) = alternating PORT1/PORT2 with Port1-gate on / Port2-gate on`
 
-`CV34 Blinking period - default 4 for 1 sec blink frequency`\
+`CV34 Blinking periode - default 4 for 1 sec blink frequency`\
 `x x x x  x x x x`\
 `         +-+-+-+----- 4 bit for blinking periode in s (0.25 ... 3.75 s)`\
 
-A blinking port is generated with writing to Address+1 and corresponding port number
-  - but only if a blinking periode in CV11 is set and port is defined as independent
+A blinking output is generated with writing to Address+1 and corresponding port number
+  - but only if a blinking periode in CV34 is set and port is defined as independent
 
 Writing to CV8 is resetting the decoder with defaults
   - CV1 = 1, CV9 = 0, CV3/CV4 = 0, CV33 = 0, CV34 = 4 
