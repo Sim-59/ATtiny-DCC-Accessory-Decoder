@@ -1,7 +1,10 @@
 # DCC accessory decoder with ATtiny85
 **Properties**
-- Possible hardware - ATtiny85 Digispark Board with additional PCB ATtiny-MuFu4P for power supply and signaling from DCC-Signal or complete PCB ATtiny-MuFuDec 
-- using the [NmraDcc library](https://github.com/mrrwa/NmraDcc) from [MRRWA](http://mrrwa.org/)
+- Possible hardware - ATtiny85 Digispark Board with additional PCB ATtiny-MuFu4P for power supply and signaling from DCC-Signal or complete PCB ATtiny-MuFuDec
+- The Digispark board can be programmed via USB using the Micronucleus bootloader
+- The MuFuDec must be programmed using an AVR programmer
+- a good information source for programming ATtiny85 is found [here](https://wolles-elektronikkiste.de/attiny85-84-45-44-25-24-programmieren)
+- The sketch is using the [NmraDcc library](https://github.com/mrrwa/NmraDcc) from [MRRWA](http://mrrwa.org/)
 - 4 output ports
 - Two consecutive module accessory decoder addresses (MADA)
   - Second address uses for blinking output
