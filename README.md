@@ -1,6 +1,6 @@
 # DCC accessory decoder with ATtiny85
 **Properties**
-- Possible hardware - ATtiny85 Digispark Board
+- Possible hardware - ATtiny85 Digispark Board with additional PCB ATtiny-MuFu4P for power supply and signaling from DCC-Signal or complete PCB ATtiny-MuFuDec 
 - using the [NmraDcc library](https://github.com/mrrwa/NmraDcc) from [MRRWA](http://mrrwa.org/)
 - 4 output ports
 - Two consecutive module accessory decoder addresses (MADA)
