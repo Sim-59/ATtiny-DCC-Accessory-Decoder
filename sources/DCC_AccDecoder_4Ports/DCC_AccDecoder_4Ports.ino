@@ -1,53 +1,68 @@
 // DCC Accessories decoder
-// (c) Michael Hochmuth https://github.com/Sim-59/ATtiny-Accessory-Decoder                          2026-04-15
+// (c) Michael Hochmuth https://github.com/Sim-59/ATtiny-Accessory-Decoder                          2026-06-01
 // 4 output ports
 // using two module addresses (MADA) with 4 ports, every port with a gate for on/off
 // second address for blinking
 // CV reading at programming track (PT) is possible with a temporarily circuit for 60 mA load at one port
 //
-// Decoder-Address = LSB + MSB*64
-// CV1 = 6 bit LSB, 
-// x x x x  x x x x
-//     +-+--+-+-+-+----- LSB 0 ... 63
+// Modul Address = LSB + MSB*64, 4 Ports at Modul, with CV29-Bit6 = 0, 
+//      CV1 = 6 bit LSB, default 1
+//      x x x x  x x x x
+//          +-+--+-+-+-+----- LSB 0 ... 63 für Decoder (Modul) Address Mode
+//      CV9 = 3 Bit MSB, default 0
+//      x x x x  x x x x
+//                 +-+-+----- MSB (0 ... 7) * 64
 //
-// CV9 = 3 Bit MSB
-// x x x x  x x x x
-//            +-+-+----- MSB (0 ... 7) * 64
+// Output Address = LSB + MSB*256 with CV29-Bit6 = 1
+//      CV1 = 8 bit LSB, default 1
+//      x x x x  x x x x
+//      +-+-+-+--+-+-+-+----- LSB 0 ... 255 für Output Address Mode
+//      CV9 = 3 Bit MSB, default 0
+//      x x x x  x x x x
+//                 +-+-+----- MSB (0 ... 7) * 256
 //
-// CV10 - default 0 for independent ports
+// CV3 / CV4 - ON TIME for PORT1 / PORT2, default 0 = continous
 // x x x x  x x x x
-//              +-+----- "0-0" (0) = independent PORT1/PORT2, 
+//       +--+-+-+-+----- 5 bit pulse length if PORT1 and PORT2 are alternating ports, number * 256 ms (256 ms ... 7.93 sec)
+//                       e.g. usable for switches without voltage cut-off
+//                       0  (all 5 bits) for continous ON if PORT is activated
+// 
+// CV33 - default 0 for independent ports
+// x x x x  x x x x
+//              +-+----- "0-0" (0) = independent PORT1/PORT2, default 
 //                       "0-1" (1) = alternating PORT1/PORT2 with Port1-gate on/off
 //                       "1-0" (2) = alternating PORT1/PORT2 with Port1-gate on / Port2-gate on
 //
-// CV11 - default 0b01000000 (64) for 1 sec blink frequency
+// CV34, default 0b00000100 (4) for 1 sec blink frequency
 // x x x x  x x x x
-// | | | +--+-+-+-+----- 5 bit pulse length if PORT1 and PORT2 are alternating ports, number * 256 ms (256 ms ... 7.93 sec)
-// | | |                 e.g. usable for switches without voltage cut-off
-// | | |                 0  (all 5 bits) for permanently ON
-// +-+-+---------------- 3 bit for blinking periode in s (0.5 ... 3.5 sec) 
+//          +-+-+-+------ 4 bit for blinking periode in s (0.25 ... 3.75 sec) 
 //
-// A blinking output is generated with writing to Address+1 and corresponding port number
+// A blinking output is generated with writing to Modul-Address + 1 and corresponding port number 
+// or Output-Address + 4 in Output Address Mode
 // but only if a blinking periode in CV11 is set and port is defined as independent
 //
-// CV29
+// CV29 = Konfiguration, default 128
 // x x x x  x x x x 
-// | +------------------ "0" = Decoder Address Mode, "1" = Output Address Mode 
-// +-------------------- "1" = Accessory Decoder Mode, is set for accessories
+// | +------------------ "0" = Decoder Address Mode, "1" = (64) Output Address Mode 
+// +-------------------- "1" = (128) Accessory Decoder Mode, is set for accessories
 //
 // writing to CV8 is resetting the decoder
 //    CV1 = 1 default accessory address-LSB 
 //    CV9 = 0 default accessory address-MSB 
-//    CV10 = 0
-//    CV11 = 64
+//    CV3 = 0
+//    CV4 = 0
+//    CV29 = 128, Dekoder Address Mode
+//    CV33 = 0
+//    CV34 = 4
 //
-
 
 #include <NmraDcc.h>
 NmraDcc Dcc;
 
 //define the destination board
 //#define UNO
+#define PCB_10
+//#define PCB_11
 
 #if defined UNO
   #define DCC_PIN         2
@@ -56,22 +71,33 @@ NmraDcc Dcc;
   #define PORT2_PIN       4
   #define PORT3_PIN       5
   #define PORT4_PIN       6
-  #define PROG_NEXT_PIN   8
+  #define PROG_NEXT_PIN   13
   #define DEBUG
-  long int debounce;
-#else                           // for ATtiny85
+ 
+#elif defined PCB_10            // for ATtiny85 old PCB version MuFu4P 1.0
   #define DCC_PIN         2
   #define DCC_ACK_PIN     3     // 60 mA-circuit can be temporarily connected to pin 4 for CV reading
-  #define PORT1_PIN       0
-  #define PORT2_PIN       1
-  #define PORT3_PIN       3
-  #define PORT4_PIN       4
+  #define PORT1_PIN       0     // ws
+  #define PORT2_PIN       1     // ge
+  #define PORT3_PIN       3     // gn (optACK)
+  #define PORT4_PIN       4     // vi
+
+#elif defined PCB_11            // for ATtiny85 PCB MuFu4P 1.1 and  MuFuDec 1.0
+  #define DCC_PIN         2
+  #define DCC_ACK_PIN     3     // 60 mA-circuit can be temporarily connected to pin 4 for CV reading
+  #define PORT1_PIN       0     // ws
+  #define PORT2_PIN       4     // ge
+  #define PORT3_PIN       1     // gn
+  #define PORT4_PIN       3     // vi (optACK)
 #endif
 
-#define CV_ACCESSORY_DECODER_MODE  10
-#define CV_ACCESSORY_TIME_MODE     11
+#define CV_PORT1_TIME_ON  3
+#define CV_PORT2_TIME_ON  4
 
-#define MODE_INDEPENDENT_PORTS 0
+#define CV_ACCESSORY_DECODER_MODE  33
+#define CV_BLINK_TIME              34
+
+#define MODE_INDEPENDENT_PORTS  0
 #define MODE_ALTERNATING_PORTS1 1
 #define MODE_ALTERNATING_PORTS2 2
 
@@ -81,15 +107,16 @@ struct CVPair {
   uint8_t Value;
 };
 
-int AccDecoderAddr, AccPortMode, SwitchOnTime, BlinkPeriod;
+int AccDecoderAddr, AccPortMode, SwitchOnTime1, SwitchOnTime2, BlinkPeriod, OutputAddr, AccDecoderPort;
 bool ProgModeActivated = false;
-bool SwitchTimeActivated = false;
+bool SwitchTime1Activated = false;
+bool SwitchTime2Activated = false;
 bool BlinkPort1 = false;
 bool BlinkPort2 = false;
 bool BlinkPort3 = false;
 bool BlinkPort4 = false;
 
-unsigned long currentPortMillis, startPortMillis;
+unsigned long currentPortMillis, startBlinkMillis, startPort1Millis, startPort2Millis;
 
 // This function is called whenever a normal DCC Turnout Packet is received and we're in Board Addressing Mode, CV29-Bit6 = 0
 void notifyDccAccTurnoutBoard( uint16_t BoardAddr, uint8_t OutputPair, uint8_t Direction, uint8_t OutputPower ) {
@@ -126,7 +153,7 @@ void notifyDccAccTurnoutOutput( uint16_t Addr, uint8_t Direction, uint8_t Output
 
 void Run_MADA( uint16_t MADA_addr, uint8_t MADA_port, uint8_t MADA_gate ) {
  
-  startPortMillis = millis();
+  startBlinkMillis = millis();
 
   #if defined DEBUG  
     Serial.print("MADA-Adresse=");
@@ -141,13 +168,15 @@ void Run_MADA( uint16_t MADA_addr, uint8_t MADA_port, uint8_t MADA_gate ) {
   if((MADA_addr == AccDecoderAddr) && (MADA_port == 1)) {
     if(MADA_gate == 1) {
       digitalWrite(PORT1_PIN, HIGH);
-      SwitchTimeActivated = true;
+      SwitchTime1Activated = true;
+      startPort1Millis = millis();
       #if defined DEBUG  
         Serial.println("PORT1 activated");   
       #endif   
 
       if (((AccPortMode & 0x03) == MODE_ALTERNATING_PORTS1) || ((AccPortMode & 0x03) == MODE_ALTERNATING_PORTS2))  {
         digitalWrite(PORT2_PIN, LOW);
+        BlinkPort2 = false;
         #if defined DEBUG  
           Serial.println("PORT2 deactivated");
         #endif
@@ -155,10 +184,19 @@ void Run_MADA( uint16_t MADA_addr, uint8_t MADA_port, uint8_t MADA_gate ) {
     } else {
       if ((AccPortMode & 0x03) == MODE_ALTERNATING_PORTS1) {
         digitalWrite(PORT2_PIN, HIGH);
-        SwitchTimeActivated = true;
+        BlinkPort2 = false;
+        SwitchTime2Activated = true;
+        startPort2Millis = millis();
         #if defined DEBUG  
           Serial.println("PORT2 activated");
         #endif
+        digitalWrite(PORT1_PIN, LOW);
+        BlinkPort1 = false;
+        #if defined DEBUG  
+          Serial.println("PORT1 deactivated");
+        #endif
+      }
+      if (((AccPortMode & 0x03) == MODE_INDEPENDENT_PORTS) &&  (SwitchOnTime2 == 0)) {  // Pulslänge in jedem Fall, auch wenn Gate zurückschaltet
         digitalWrite(PORT1_PIN, LOW);
         #if defined DEBUG  
           Serial.println("PORT1 deactivated");
@@ -170,11 +208,14 @@ void Run_MADA( uint16_t MADA_addr, uint8_t MADA_port, uint8_t MADA_gate ) {
   if((MADA_addr == AccDecoderAddr) && (MADA_port == 2) && (AccPortMode & 0x03) == MODE_ALTERNATING_PORTS2) {
     if(MADA_gate == 1) {
       digitalWrite(PORT2_PIN, HIGH);
-      SwitchTimeActivated = true;
+      SwitchTime2Activated = true;
+      startPort2Millis = millis();
+      BlinkPort2 = false;
       #if defined DEBUG  
         Serial.println("PORT2 activated");  
       #endif   
       digitalWrite(PORT1_PIN, LOW);
+      BlinkPort1 = false;
       #if defined DEBUG  
         Serial.println("PORT1 deactivated");
       #endif
@@ -182,57 +223,60 @@ void Run_MADA( uint16_t MADA_addr, uint8_t MADA_port, uint8_t MADA_gate ) {
   }
 
   if(((MADA_addr == AccDecoderAddr) && (MADA_port == 2)) && ((AccPortMode & 0x03) == MODE_INDEPENDENT_PORTS)) {
-    if(MADA_gate == 0) {
-      digitalWrite(PORT2_PIN, LOW);
-      BlinkPort2 = false;
-      #if defined DEBUG  
-        Serial.println("PORT2 deactivated");
-      #endif
-    } else {
+    if(MADA_gate == 1) {
       digitalWrite(PORT2_PIN, HIGH);
+      SwitchTime2Activated = true;
+      startPort2Millis = millis();
       BlinkPort2 = false;
       #if defined DEBUG  
         Serial.println("PORT2 activated");
       #endif      
+    } else {
+      if (SwitchOnTime2 == 0) {       // Pulslänge in jedem Fall, auch wenn Gate zurückschaltet
+        digitalWrite(PORT2_PIN, LOW);
+        BlinkPort2 = false;
+        #if defined DEBUG  
+          Serial.println("PORT2 deactivated");
+        #endif
+      }
     }
   }
 
   if((MADA_addr == AccDecoderAddr) && (MADA_port == 3)) {
-    if(MADA_gate == 0) {
-      digitalWrite(PORT3_PIN, LOW);
-      BlinkPort3 = false;
-      #if defined DEBUG  
-        Serial.println("PORT3 deactivated");
-      #endif
-    } else {
+    if(MADA_gate == 1) {
       digitalWrite(PORT3_PIN, HIGH);
       BlinkPort3 = false;
       #if defined DEBUG  
         Serial.println("PORT3 activated"); 
       #endif     
+    } else {
+      digitalWrite(PORT3_PIN, LOW);
+      BlinkPort3 = false;
+      #if defined DEBUG  
+        Serial.println("PORT3 deactivated");
+      #endif
     }
   }
 
   if((MADA_addr == AccDecoderAddr) && (MADA_port == 4)) {
-    if(MADA_gate == 0) {
-      digitalWrite(PORT4_PIN, LOW);
-      BlinkPort4 = false;
-      #if defined DEBUG  
-        Serial.println("PORT4 deactivated");
-      #endif
-    } else {
+    if(MADA_gate == 1) {
       digitalWrite(PORT4_PIN, HIGH);
       BlinkPort4 = false;
       #if defined DEBUG  
         Serial.println("PORT4 activated"); 
       #endif     
+    } else {
+      digitalWrite(PORT4_PIN, LOW);
+      BlinkPort4 = false;
+      #if defined DEBUG  
+        Serial.println("PORT4 deactivated");
+      #endif
     }
   }
 
   if((MADA_addr == AccDecoderAddr+1) && (MADA_port == 1) && ((AccPortMode & 0x03) == MODE_INDEPENDENT_PORTS)) {
     if(MADA_gate == 0) {
       BlinkPort1 = false;
-      // Restore Initial State
       digitalWrite(PORT1_PIN, LOW);
       #if defined DEBUG  
         Serial.println("BlinkPort1 off"); 
@@ -293,9 +337,12 @@ CVPair FactoryDefaultCVs[] = {
   // These two CVs define the Long DCC Address, CV1 = 6 bit LSB, CV9 = 3 bit MSB
   {CV_ACCESSORY_DECODER_ADDRESS_MSB, 0},
   {CV_ACCESSORY_DECODER_ADDRESS_LSB, DEFAULT_ACCESSORY_DECODER_ADDRESS},
-  {CV_29_CONFIG, CV29_ACCESSORY_DECODER | CV29_OUTPUT_ADDRESS_MODE},
+//  {CV_29_CONFIG, CV29_ACCESSORY_DECODER | CV29_OUTPUT_ADDRESS_MODE},
+  {CV_29_CONFIG, CV29_ACCESSORY_DECODER},
+  {CV_PORT1_TIME_ON,0},                               // Time on Port1
+  {CV_PORT2_TIME_ON,0},                               // Time on Port2
   {CV_ACCESSORY_DECODER_MODE,MODE_INDEPENDENT_PORTS}, // independent ports
-  {CV_ACCESSORY_TIME_MODE,0b01000000},                // 1s blink frequeny
+  {CV_BLINK_TIME,4},                                  // 1s blink frequeny
 };
 
 //uint8_t FactoryDefaultCVIndex = sizeof(FactoryDefaultCVs) / sizeof(CVPair);
@@ -330,48 +377,82 @@ void setup() {
     Serial.println();
   #endif
 
+  // configure pins
+  pinMode(DCC_ACK_PIN, OUTPUT);
+  digitalWrite(DCC_ACK_PIN, LOW);
+  pinMode(PORT1_PIN, OUTPUT);
+  digitalWrite(PORT1_PIN, LOW);
+  pinMode(PORT2_PIN, OUTPUT);
+  digitalWrite(PORT2_PIN, LOW);
+  pinMode(PORT3_PIN, OUTPUT);
+  digitalWrite(PORT3_PIN, LOW);
+  pinMode(PORT4_PIN, OUTPUT);
+  digitalWrite(PORT4_PIN, LOW);
+  #if defined UNO
+    pinMode(PROG_NEXT_PIN, INPUT_PULLUP);
+  #endif
 
   if ((Dcc.getCV(CV_ACCESSORY_DECODER_ADDRESS_LSB) == 255) || (Dcc.getCV(CV_ACCESSORY_DECODER_ADDRESS_MSB) == 255)) {
     FactoryDefaultCVIndex = sizeof(FactoryDefaultCVs) / sizeof(CVPair);
   } else {
-    AccDecoderAddr = (Dcc.getCV(CV_ACCESSORY_DECODER_ADDRESS_LSB & 0x03F)) + (Dcc.getCV(CV_ACCESSORY_DECODER_ADDRESS_MSB) << 6);
     cv29_Bits = Dcc.getCV(CV_29_CONFIG);
-    AccPortMode = Dcc.getCV(CV_ACCESSORY_DECODER_MODE);
-    SwitchOnTime = Dcc.getCV(CV_ACCESSORY_TIME_MODE) & 0x1F;
-    BlinkPeriod = (Dcc.getCV(CV_ACCESSORY_TIME_MODE) & 0xE0) >> 5;
+    // Bit6 = 1 -> Output-Address-Mode, Bit6 = 0 -> Decoder-Address-Mode
+    if ((cv29_Bits & 0x40) != 0) {
+      OutputAddr = Dcc.getCV(CV_ACCESSORY_DECODER_ADDRESS_LSB) + (Dcc.getCV(CV_ACCESSORY_DECODER_ADDRESS_MSB) << 8);
+      AccDecoderAddr = int(OutputAddr-1) / 4 + 1;
+      AccDecoderPort = int(OutputAddr-1) % 4 + 1;
+    } else {
+      AccDecoderAddr = (Dcc.getCV(CV_ACCESSORY_DECODER_ADDRESS_LSB & 0x03F)) + (Dcc.getCV(CV_ACCESSORY_DECODER_ADDRESS_MSB) << 6);
+    }
+
+    AccPortMode = (Dcc.getCV(CV_ACCESSORY_DECODER_MODE) & 0x03);
+    if (AccPortMode > 2) AccPortMode = 0;
+    SwitchOnTime1 = (Dcc.getCV(CV_PORT1_TIME_ON) & 0x1F);
+    SwitchOnTime2 = (Dcc.getCV(CV_PORT2_TIME_ON) & 0x1F);
+    BlinkPeriod = (Dcc.getCV(CV_BLINK_TIME) & 0x0F);
 
     #if defined DEBUG  
         Serial.print(Dcc.getCV(CV_ACCESSORY_DECODER_ADDRESS_MSB));
         Serial.print("-");
         Serial.println(Dcc.getCV(CV_ACCESSORY_DECODER_ADDRESS_LSB));
-        Serial.print("Adresse:      "); Serial.println(AccDecoderAddr);
-        Serial.print("CV29:         "); Serial.println(cv29_Bits,BIN);
-        if (AccPortMode & 0x01) Serial.println("PORT1/2 alternaring mode"); else Serial.println("PORT1/2 independent mode");
-        Serial.print("Pulslänge:    "); Serial.println(SwitchOnTime);
-        Serial.print("Blinkperiode: "); Serial.println(BlinkPeriod);
+        Serial.print("CV29:            "); Serial.print(cv29_Bits,BIN);
+        if ((cv29_Bits & 0x40) != 0) Serial.println(" -> Output Address Mode");
+        else  Serial.println(" -> Dekoder Address Mode");
+        if ((cv29_Bits & 0x40) != 0) {
+          Serial.print("Output-Adresse:  "); Serial.print(OutputAddr);
+          Serial.print("  Dekoder-Adresse: "); Serial.print(AccDecoderAddr);
+          Serial.print("-"); Serial.println(AccDecoderPort);
+        } else {
+          Serial.print("Dekoder-Adresse: "); Serial.println(AccDecoderAddr);
+        }
+        if ((AccPortMode & 0x03) == MODE_ALTERNATING_PORTS1) Serial.println("PORT1/2 alternating mode 1"); 
+        if ((AccPortMode & 0x03) == MODE_ALTERNATING_PORTS2) Serial.println("PORT1/2 alternaring mode 2"); 
+        if ((AccPortMode & 0x03) == 0) Serial.println("PORT1/2 independent mode");
+        Serial.print("Pulslänge1:    "); Serial.print(SwitchOnTime1); Serial.println(" * 256 ms");
+        Serial.print("Pulslänge2:    "); Serial.print(SwitchOnTime2); Serial.println(" * 256 ms");
+        Serial.print("Blinkperiode : "); Serial.print(BlinkPeriod); Serial.println(" * 250 ms");
     #endif
   }
 
-  // configure pins
-  pinMode(PORT1_PIN, OUTPUT);
-  pinMode(PORT2_PIN, OUTPUT);
-  pinMode(PORT3_PIN, OUTPUT);
-  pinMode(PORT4_PIN, OUTPUT);
   #if defined UNO
     pinMode(PROG_NEXT_PIN, INPUT_PULLUP);
   #endif
-  pinMode(DCC_ACK_PIN, OUTPUT);
-  digitalWrite(PORT1_PIN, LOW);
-  digitalWrite(PORT2_PIN, LOW);
-  digitalWrite(PORT3_PIN, LOW);
-  digitalWrite(PORT4_PIN, LOW);
 
   // init NmraDcc library (PIN, manufacturer, version...) 
   Dcc.pin(digitalPinToInterrupt(DCC_PIN), DCC_PIN, 1);
   Dcc.initAccessoryDecoder(MAN_ID_DIY, 10, cv29_Bits & FLAGS_OUTPUT_ADDRESS_MODE, 0);   // CV8=Manufacturer-ID=13, CV7=Manufacturer-VERS=10
 
-  pinMode(DCC_ACK_PIN, OUTPUT);
-  digitalWrite(DCC_ACK_PIN, LOW);
+  // Wait for the first command to programme the address after setting PROG_NEXT_PIN to LOW and releasing
+  #if defined UNO
+    if (digitalRead(PROG_NEXT_PIN) == 0) {
+      #if defined DEBUG  
+          Serial.println("ProgModeKey pressed");
+      #endif
+      Dcc.setAccDecDCCAddrNextReceived(1);
+    }
+  #endif
+
+//  delay(200);  // uncomment this if Micronucleus Bootloader is used.
 
   #if defined DEBUG  
     Serial.println("Decoder initialized");
@@ -393,21 +474,33 @@ void loop() {
   }
 
   // ImpulsMode at alternating PORT!/PORT2
-  if (((AccPortMode & 0x03) != 0) && (SwitchOnTime != 0) && SwitchTimeActivated == true) {
-    int PortMillis = SwitchOnTime << 8;
-    if ((currentPortMillis-startPortMillis > PortMillis)) {
-      SwitchTimeActivated = false;
+//  if (((AccPortMode & 0x03) != 0) && (SwitchOnTime1 != 0) && SwitchTime1Activated == true) {
+  if ((SwitchOnTime1 != 0) && SwitchTime1Activated == true) {
+    int PortMillis = SwitchOnTime1 << 8;
+    if ((currentPortMillis-startPort1Millis > PortMillis)) {
+      SwitchTime1Activated = false;
       digitalWrite(PORT1_PIN, LOW);
+      #if defined DEBUG  
+        Serial.println("PORT1 Time Out");
+      #endif
+    }
+  }
+
+//  if (((AccPortMode & 0x03) != 0) && (SwitchOnTime2 != 0) && SwitchTime2Activated == true) {
+  if ((SwitchOnTime2 != 0) && SwitchTime2Activated == true) {
+    int PortMillis = SwitchOnTime2 << 8;
+    if ((currentPortMillis-startPort2Millis > PortMillis)) {
+      SwitchTime2Activated = false;
       digitalWrite(PORT2_PIN, LOW);
       #if defined DEBUG  
-        Serial.println("PORT1 and PORT2 deactivated");
+        Serial.println("PORT2 Time Out");
       #endif
     }
   }
 
   // BlinkPort PORT1 and PORT2 if they are not in impulse mode
   if (BlinkPeriod && BlinkPort1 && ((AccPortMode & 0x01) == MODE_INDEPENDENT_PORTS)) {
-    if (((currentPortMillis-startPortMillis)  % (BlinkPeriod*500)) < BlinkPeriod*250) {
+    if (((currentPortMillis-startBlinkMillis)  % (BlinkPeriod*250)) < BlinkPeriod*125) {
       digitalWrite(PORT1_PIN, HIGH);
     } else {
       digitalWrite(PORT1_PIN, LOW);
@@ -415,7 +508,7 @@ void loop() {
   }
 
   if (BlinkPeriod && BlinkPort2 && ((AccPortMode & 0x01) == MODE_INDEPENDENT_PORTS)) {
-    if (((currentPortMillis-startPortMillis)  % (BlinkPeriod*500)) < BlinkPeriod*250) {
+    if (((currentPortMillis-startBlinkMillis)  % (BlinkPeriod*250)) < BlinkPeriod*125) {
       digitalWrite(PORT2_PIN, HIGH);
     } else {
       digitalWrite(PORT2_PIN, LOW);
@@ -424,7 +517,7 @@ void loop() {
 
   // BlinkPort PORT3
   if (BlinkPeriod && BlinkPort3) {
-    if (((currentPortMillis-startPortMillis) % (BlinkPeriod*500)) < BlinkPeriod*250) {
+    if (((currentPortMillis-startBlinkMillis) % (BlinkPeriod*250)) < BlinkPeriod*125) {
       digitalWrite(PORT3_PIN, HIGH);
     } else {
       digitalWrite(PORT3_PIN, LOW);
@@ -433,31 +526,11 @@ void loop() {
 
   // BlinkPort PORT4
   if (BlinkPeriod && BlinkPort4) {
-    if (((currentPortMillis-startPortMillis) % (BlinkPeriod*500)) < BlinkPeriod*250) {
+    if (((currentPortMillis-startBlinkMillis) % (BlinkPeriod*250)) < BlinkPeriod*125) {
       digitalWrite(PORT4_PIN, HIGH);
     } else {
       digitalWrite(PORT4_PIN, LOW);
     }
   }
 
-  // Wait for the first command to programme the address after setting PROG_NEXT_PIN to LOW and releasing
-  #if defined UNO
-    // Set address to first incoming command
-    if (debounce > 0) debounce--;
-    if ((digitalRead(PROG_NEXT_PIN) == 0) && (ProgModeActivated == false) && (debounce == 0)) {
-      ProgModeActivated = true;
-      debounce = 30000;
-      Dcc.setAccDecDCCAddrNextReceived(1);
-      #if defined DEBUG  
-          Serial.println("ProgModeKey pressed");
-      #endif
-    }
-    if ((digitalRead(PROG_NEXT_PIN) == 1) && (debounce == 0) && (ProgModeActivated == true)) {
-      ProgModeActivated = false;    
-      debounce = 30000;
-      #if defined DEBUG  
-          Serial.println("ProgModeKey released");
-      #endif
-    }
-  #endif
 }
