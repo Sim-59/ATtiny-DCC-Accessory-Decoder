@@ -2,7 +2,7 @@
 **Properties**
 - Possible hardware - ATtiny85 Digispark Board with additional PCB ATtiny-MuFu4P for power supply and signaling from DCC-Signal or complete PCB ATtiny-MuFuDec
 - The Digispark board can be programmed via USB using the Micronucleus bootloader, I recommend to use no bootloader, because bootloader needs 300 ms (with upgrade) ... 5s (default) at power on. 
-- The MuFuDec must be programmed via ISP using an AVR programmer.
+- The ATtiny-MuFuDec (without Digispark-Board) must be programmed via ISP using an AVR programmer.
 - a good information source for programming ATtiny85 is found at [Wolles Elektronikkiste](https://wolles-elektronikkiste.de/attiny-mit-arduino-code-programmieren)
 - The sketch is using the [NmraDcc library](https://github.com/mrrwa/NmraDcc) from [MRRWA](http://mrrwa.org/)
 - 4 output ports
