@@ -11,14 +11,23 @@
   - Each address uses 4 ports with a gate setting to on/off
 - CV reading at programming track (PT) is possible with a temporarily circuit for 60 mA load at one port
 
-`Decoder-Address = LSB (CV1) + MSB (CV9) * 64`\
-`CV1 = 6 bit LSB, default 1`\
-`x x x x  x x x x`\
-`    +-+--+-+-+-+----- LSB 0 ... 63`
+Default DCC addressing with CV29-Bit6 = 0\
+`Decoder/Modul Address = LSB + MSB*64, 4 Ports at Modul`\
+`  CV1 = 6 bit LSB, default 1`\
+`  x x x x  x x x x`\
+`      +-+--+-+-+-+----- LSB 0 ... 63 für Decoder (Modul) Address Mode`\
+`  CV9 = 3 Bit MSB, default 0`\
+`  x x x x  x x x x`\
+`             +-+-+----- MSB (0 ... 7) * 64`\
 
-`CV9 = 3 Bit MSB, default 0`\
-`x x x x  x x x x`\
-`           +-+-+----- MSB (0 ... 7) * 64`
+or alternativly with CV29-Bit6 = 1\
+`Output Address = LSB + MSB*256`\
+`  CV1 = 8 bit LSB, default 1`\
+`  x x x x  x x x x`\
+`  +-+-+-+--+-+-+-+----- LSB 0 ... 255 für Output Address Mode`\
+`  CV9 = 3 Bit MSB, default 0`\
+`  x x x x  x x x x`\
+`             +-+-+----- MSB (0 ... 7) * 256`\
 
 `CV3 / CV4 Time On Function for PB0 / PB4 - default 0`\
 `x x x x  x x x x`\
@@ -29,7 +38,7 @@
 
 `CV29 Configuration, default 128`\
 `x x x x  x x x x `\
-`| +------------------ "0" = Decoder Address Mode "1" = Output Address Mode`\
+`| +------------------ "0" = Decoder/Modul Address Mode "1" = Output Address Mode`\
 `+-------------------- "1" = Accessory Decoder Mode, is set for accessories`
 
 `CV33 Decoder configuration - default 0 for independent ports`\
