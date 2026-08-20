@@ -15,7 +15,7 @@ Default DCC addressing with CV29-Bit6 = 0\
 `Decoder/Modul Address = LSB + MSB*64, 4 Ports at Modul`\
 `  CV1 = 6 bit LSB, default 1`\
 `  x x x x  x x x x`\
-`      +-+--+-+-+-+----- LSB 0 ... 63 für Decoder (Modul) Address Mode`\
+`      +-+--+-+-+-+----- LSB 0 ... 63 für Decoder (Modul) Address`\
 `  CV9 = 3 Bit MSB, default 0`\
 `  x x x x  x x x x`\
 `             +-+-+----- MSB (0 ... 7) * 64`\
@@ -24,7 +24,7 @@ or alternativly with CV29-Bit6 = 1\
 `Output Address = LSB + MSB*256`\
 `  CV1 = 8 bit LSB, default 1`\
 `  x x x x  x x x x`\
-`  +-+-+-+--+-+-+-+----- LSB 0 ... 255 für Output Address Mode`\
+`  +-+-+-+--+-+-+-+----- LSB 0 ... 255 für Output Address`\
 `  CV9 = 3 Bit MSB, default 0`\
 `  x x x x  x x x x`\
 `             +-+-+----- MSB (0 ... 7) * 256`\
