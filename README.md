@@ -27,7 +27,7 @@
 `                      e.g. usable for switches without voltage cut-off`\
 `                      0  (all 5 bits) for continous ON if activate`\
 
-`CV29 Configuration, default 192`\
+`CV29 Configuration, default 128`\
 `x x x x  x x x x `\
 `| +------------------ "0" = Decoder Address Mode "1" = Output Address Mode`\
 `+-------------------- "1" = Accessory Decoder Mode, is set for accessories`
