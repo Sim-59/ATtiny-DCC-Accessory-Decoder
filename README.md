@@ -9,7 +9,7 @@
 - Two consecutive module accessory decoder addresses (MADA)
   - Second address uses for blinking output
   - Each address uses 4 ports with a gate setting to on/off
-- CV reading at programming track (PT) is possible with a temporarily circuit for 60 mA load at one port
+- CV reading at programming track (PT) is possible with a temporarily circuit for 60 mA load at one port. This is activated with short-circuiting at ACK during programming.
 
 Default DCC addressing with CV29-Bit6 = 0\
 `Decoder/Modul Address = LSB + MSB*64, 4 Ports at Modul`\
