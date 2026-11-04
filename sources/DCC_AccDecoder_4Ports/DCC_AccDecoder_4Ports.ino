@@ -1,11 +1,11 @@
 // DCC Accessories decoder
-// (c) Michael Hochmuth https://github.com/Sim-59/ATtiny-Accessory-Decoder                          2026-06-01
+// (c) Michael Hochmuth https://github.com/Sim-59/ATtiny-Accessory-Decoder                          2026-10-28
 // 4 output ports
 // using two module addresses (MADA) with 4 ports, every port with a gate for on/off
 // second address for blinking
 // CV reading at programming track (PT) is possible with a temporarily circuit for 60 mA load at one port
 //
-// Modul Address = LSB + MSB*64, 4 Ports at Modul, with CV29-Bit6 = 0, 
+// Modul Address (default) = LSB + MSB*64, 4 Ports at Modul, with CV29-Bit6 = 0, 
 //      CV1 = 6 bit LSB, default 1
 //      x x x x  x x x x
 //          +-+--+-+-+-+----- LSB 0 ... 63 für Decoder (Modul) Address Mode
@@ -90,6 +90,8 @@ NmraDcc Dcc;
   #define PORT3_PIN       1     // gn
   #define PORT4_PIN       3     // vi (optACK)
 #endif
+
+#define MAN_VERSION       10   // used in init call, is read in CV#7
 
 #define CV_PORT1_TIME_ON  3
 #define CV_PORT2_TIME_ON  4
@@ -440,7 +442,7 @@ void setup() {
 
   // init NmraDcc library (PIN, manufacturer, version...) 
   Dcc.pin(digitalPinToInterrupt(DCC_PIN), DCC_PIN, 1);
-  Dcc.initAccessoryDecoder(MAN_ID_DIY, 10, cv29_Bits & FLAGS_OUTPUT_ADDRESS_MODE, 0);   // CV8=Manufacturer-ID=13, CV7=Manufacturer-VERS=10
+  Dcc.initAccessoryDecoder(MAN_ID_DIY, MAN_VERSION, cv29_Bits & FLAGS_OUTPUT_ADDRESS_MODE, 0);   // CV8=Manufacturer-ID=13, CV7=Manufacturer-VERS=10
 
   // Wait for the first command to programme the address after setting PROG_NEXT_PIN to LOW and releasing
   #if defined UNO
