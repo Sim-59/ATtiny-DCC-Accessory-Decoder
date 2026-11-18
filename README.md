@@ -1,19 +1,26 @@
 # DCC accessory decoder with ATtiny85
+## Overview
+The DCC accessory decoder us used for stationary light functions at railway parts. 
+### Author
+[Michael Hochmuth](https://github.com/Sim-59)
+### Credits
+* Used is the [NmraDCC library for Arduino](http://mrrwa.org/) from MRRwA
+
+## Hardware
 **Properties**
 - Possible hardware - ATtiny85 Digispark Board with additional PCB [ATtiny-MuFu4P](http://simandit.de/simwiki/doku.php?id=modellbahn:umbauten:dcc-dekoder#funktions-dekoder_mit_digispark-board) for power supply and signaling from DCC-Signal
 
 ![description](https://github.com/Sim-59/ATtiny-DCC-Accessory-Decoder/blob/main/images/DCC-MuFu4P_Text_Acc_k.jpg)
 
-- The Digispark board can be programmed via USB using the Micronucleus bootloader, I recommend to use no bootloader, because bootloader needs 300 ms (with upgrade) ... 5s (default) at power on. 
 - Alternative hardware: The new [ATtiny-MuFuDec](https://simandit.de/simwiki/doku.php?id=modellbahn:umbauten:dcc-dekoder#multi-funktions-dekoder_4-port) must be programmed via ISP using an AVR programmer.
 
 ![description](https://github.com/Sim-59/ATtiny-DCC-Accessory-Decoder/blob/main/images/PCB_MuFuDec_01_k.png)
 
-- a good information source for programming ATtiny85 is found at [Wolles Elektronikkiste](https://wolles-elektronikkiste.de/attiny-mit-arduino-code-programmieren)
+## Software
 - The sketch is using the [NmraDcc library](https://github.com/mrrwa/NmraDcc) from [MRRWA](http://mrrwa.org/)
 - 4 output ports
 - Two consecutive module accessory decoder addresses (MADA)
-  - Second address uses for blinking output
+  - Second address used for blinking output
   - Each address uses 4 ports with a gate setting to on/off
 - CV reading at programming track (PT) is possible with a temporarily circuit for 60 mA load at one port. This is activated with short-circuiting at ACK during programming.
 
@@ -42,6 +49,9 @@ or alternativly with CV29-Bit6 = 1\
 `                      e.g. usable for switches without voltage cut-off`\
 `                      0  (all 5 bits) for continous ON if activate`\
 
+`CV7 Version number`\
+`CV8 Manufarctory ID = 13 for DIY`\
+
 `CV29 Configuration, default 128`\
 `x x x x  x x x x `\
 `| +------------------ "0" = Decoder/Modul Address Mode "1" = Output Address Mode`\
@@ -65,3 +75,9 @@ Writing to CV8 is resetting the decoder with defaults
   - PORT1 and PORT2 are independent ports
   - PORT3 and PORT4 are always independent
   - Blinking periode 1 sec
+
+## Installation
+The Digispark board can be programmed via USB using the Micronucleus bootloader, I recommend to use no bootloader, because bootloader needs 300 ms (with upgrade) ... 5s (default) at power on.\
+The decoder board is programmed in the Arduino IDE using an ISP programmer. Contact pads are located on one side of the board for this purpose. The first step is to programme a bootloader. The procedure is described on this [Wiki page](https://simandit.de/simwiki/doku.php?id=weiteres:arduino:bootloader#attiny85).
+
+A good information source for programming ATtiny85 is found at [Wolles Elektronikkiste](https://wolles-elektronikkiste.de/attiny-mit-arduino-code-programmieren)
