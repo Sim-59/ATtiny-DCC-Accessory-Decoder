@@ -76,6 +76,9 @@ Writing to CV8 is resetting the decoder with defaults
   - PORT3 and PORT4 are always independent
   - Blinking periode 1 sec
 
+### Special software variant
+A special variant is **DCC_AccDecoder_2xSwitch**. This supports two alternating port pairs PORT1/PORT2 and PORT3/PORT4. All blinking parts are removed. CV5 and CV6 are used for On time of PORT3 and PORT4. For this variant you need drivers for the switch current.
+
 ## Installation
 The Digispark board can be programmed via USB using the Micronucleus bootloader, I recommend to use no bootloader, because bootloader needs 300 ms (with upgrade) ... 5s (default) at power on.\
 The decoder board is programmed in the Arduino IDE using an ISP programmer. Contact pads are located on one side of the board for this purpose. The first step is to programme a bootloader. The procedure is described on this [Wiki page](https://simandit.de/simwiki/doku.php?id=weiteres:arduino:bootloader#attiny85).
