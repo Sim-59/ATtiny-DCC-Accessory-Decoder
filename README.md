@@ -81,7 +81,7 @@ A special variant is **DCC_AccDecoder_2xSwitch**. This supports two alternating 
   - All blinking parts are removed.
   - CV5 and CV6 are used for On time of PORT3 and PORT4
 
-For this variant you need drivers for the switch current. An example you find at [Josefs web page](https://jo-fri.github.io/Eisenbahn/DCC_ATtiny85/DCC_ATtiny85.html#weichendecoder)
+For this variant you need drivers for the switch current. An example you find at [Josefs web page](https://jo-fri.github.io/Eisenbahn/DCC_ATtiny85/index.html)
 
 ## Installation
 The Digispark board can be programmed via USB using the Micronucleus bootloader, I recommend to use no bootloader, because bootloader needs 300 ms (with upgrade) ... 5s (default) at power on.\
