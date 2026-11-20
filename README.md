@@ -80,7 +80,7 @@ Writing to CV8 is resetting the decoder with defaults
 A special variant is **DCC_AccDecoder_2xSwitch**. This supports two alternating port pairs PORT1/PORT2 and PORT3/PORT4. 
   - All blinking parts and CV34 are removed from the above version
   - additional CV5 and CV6 are used for On time of PORT3 and PORT4
-  - default ON time is 512 ms (CV3 ... CV6 = 2)
+  - default ON time is 0.5 s (CV3 ... CV6 = 2)
   - value for CV33 only 1 and 2 used
 
 For this variant you need drivers for the switch current. An example you find at [Josefs web page](https://jo-fri.github.io/Eisenbahn/DCC_ATtiny85/index.html)
