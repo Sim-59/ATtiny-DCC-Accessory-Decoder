@@ -79,7 +79,8 @@ Writing to CV8 is resetting the decoder with defaults
 ### Special software variant
 A special variant is **DCC_AccDecoder_2xSwitch**. This supports two alternating port pairs PORT1/PORT2 and PORT3/PORT4. 
   - All blinking parts are removed.
-  - CV5 and CV6 are used for On time of PORT3 and PORT4.
+  - CV5 and CV6 are used for On time of PORT3 and PORT4
+
 For this variant you need drivers for the switch current. An example you find at [Josefs web page](https://jo-fri.github.io/Eisenbahn/DCC_ATtiny85/DCC_ATtiny85.html#weichendecoder)
 
 ## Installation
